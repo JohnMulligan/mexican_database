@@ -1,158 +1,315 @@
 from django.db import models
 from document.models import Documento
-from geo.models import Location
+from geo.models import Lugar
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-# Create your models here.
-
-class Occupation(models.Model):
-	name = models.CharField(max_length=255,blank=False,null=False,unique=True)
+class CategoriaDeOcupacion(models.Model):
+	nombre = models.CharField(max_length=50,blank=False,null=False,unique=True)
 	
 	def __str__(self):
-		return self.name
+		return self.nombre
 
-class Person(models.Model):
+class Ocupacion(models.Model):
+	nombre = models.CharField(max_length=50,blank=False,null=False,unique=True)
 	
-	principal_alias = models.CharField(max_length=255)
-	# Personal info.
-	birth_place = models.ForeignKey(
-		Location,
+	def __str__(self):
+		return self.nombre
+
+class Sexo(models.Model):
+	nombre = models.CharField(max_length=50,blank=False,null=False,unique=True)
+	
+	def __str__(self):
+		return self.nombre
+
+class Etonimo(models.Model):
+	nombre = models.CharField(max_length=50,blank=False,null=False,unique=True)
+	
+	def __str__(self):
+		return self.nombre
+
+class CalidadDePersona(models.Model):
+	nombre = models.CharField(max_length=50,blank=False,null=False,unique=True)
+	
+	def __str__(self):
+		return self.nombre
+
+class HispanizacionDePersona(models.Model):
+	nombre = models.CharField(max_length=50,blank=False,null=False,unique=True)
+	
+	def __str__(self):
+		return self.nombre
+
+class EstatusDeEsclavizador(models.Model):
+	nombre = models.CharField(max_length=50,blank=False,null=False,unique=True)
+	
+	def __str__(self):
+		return self.nombre
+
+class SituacionDeLugarDeEsclavizador(models.Model):
+	nombre = models.CharField(max_length=50,blank=False,null=False,unique=True)
+	
+	def __str__(self):
+		return self.nombre
+
+
+class Esclavizador(models.Model):
+	
+	nombre = models.CharField(max_length=50)
+	
+	apellido = models.CharField(max_length=50)
+	
+	estatus_de_esclavizador = models.ForeignKey(
+		EstatusDeEsclavizador,
 		null=True,
 		blank=True,
 		on_delete=models.SET_NULL,
 		related_name='+'
 	)
-	birth_day = models.IntegerField(
-		null=True,
-		blank=True,
-		validators=[MinValueValidator(1),MaxValueValidator(31)]
-	)
-	birth_month = models.IntegerField(
-		null=True,
-		blank=True,
-		validators=[MinValueValidator(1),MaxValueValidator(12)]
-	)
-	birth_year = models.IntegerField(
-		null=True,
-		blank=True,
-		validators=[MinValueValidator(0),MaxValueValidator(2000)]
-	)
 	
-	occupation = models.ForeignKey(
-		Occupation,
-		null=False,
-		blank=False,
-		on_delete=models.CASCADE,
+	sexo = models.ForeignKey(
+		Sexo,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
 		related_name='+'
 	)
 	
+	calidad_de_persona = models.ManyToManyField(
+		CalidadDePersona
+	)
 	
-	death_day = models.IntegerField(
+	lugar = models.ForeignKey(
+		Lugar,
 		null=True,
 		blank=True,
-		validators=[MinValueValidator(1),MaxValueValidator(31)]
+		on_delete=models.SET_NULL,
 	)
-	death_month = models.IntegerField(
+	
+	lugar_situacion=models.ForeignKey(
+		SituacionDeLugarDeEsclavizador,
 		null=True,
 		blank=True,
-		validators=[MinValueValidator(1),MaxValueValidator(12)]
+		on_delete=models.SET_NULL,
 	)
-	death_year = models.IntegerField(
+	
+	ocupacion = models.ForeignKey(
+		Ocupacion,
 		null=True,
 		blank=True,
-		validators=[MinValueValidator(0),MaxValueValidator(2000)]
+		on_delete=models.SET_NULL,
+		related_name='+'
 	)
-
-	death_place = models.ForeignKey(
-		Location,
+	
+	categoria_de_ocupacion = models.ForeignKey(
+		CategoriaDeOcupacion,
 		null=True,
 		blank=True,
 		on_delete=models.SET_NULL,
 		related_name='+'
 	)
 
-	principal_location = models.ForeignKey(
-		Location,
+	def __str__(self):
+		return ' : '.join([i if i is not None else '' for i in [self.nombre,self.apellido]])
+
+
+class PersonaEsclavizada(models.Model):
+	
+	primer_nombre = models.CharField(max_length=50)
+	
+	apellido = models.CharField(max_length=50)
+	
+	nombre_y_apellido_estandarizados=models.CharField(max_length=100)
+	
+	calidad_de_persona = models.ManyToManyField(
+		CalidadDePersona
+	)
+	
+	cabella = models.CharField(max_length=100)
+	
+	ojos = models.CharField(max_length=100)
+	
+	marcas_corporales = models.CharField(max_length=100)
+	
+	registros_de_conductas_y_condiciones= models.CharField(max_length=350)
+	
+	ocupacion = models.ForeignKey(
+		Ocupacion,
 		null=True,
-		on_delete=models.SET_NULL,
-		db_index=True,
 		blank=True,
+		on_delete=models.SET_NULL,
 		related_name='+'
 	)
+	
+	categoria_de_ocupacion = models.ForeignKey(
+		CategoriaDeOcupacion,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+		related_name='+'
+	)
+	
+	hispanizacion = models.ForeignKey(
+		HispanizacionDePersona,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+		related_name='+'
+	)
+	
+	sexo = models.ForeignKey(
+		Sexo,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+		related_name='+'
+	)
+	
+	etonimo = models.ForeignKey(
+		Etonimo,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+	)
+	
+	procedencia=models.ManyToManyField(
+		Lugar
+	)
+	
+	lugar_ultimo = models.ForeignKey(
+		Lugar,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+		related_name='+'
+	)
+	
+	lugar_nuevo = models.ForeignKey(
+		Lugar,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+		related_name='+'
+	)
+	
+	etonimo = models.ForeignKey(
+		Etonimo,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+	)
+	
+	
+	etonimo = models.ForeignKey(
+		Etonimo,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+	)
+
 	notes = models.CharField(null=True, max_length=8192,blank=True)
-	is_natural_person = models.BooleanField(null=False, default=True,blank=True)
+	
 	last_updated=models.DateTimeField(auto_now=True)
-	human_reviewed=models.BooleanField(default=False,blank=True,null=True)
-	#It's going to be hairy mapping all this data over from legacy
-	#so I'm going to have to maintain a sort of shadow pk for use in migrations
-	legacy_id=models.IntegerField(null=True,blank=True)
 
 	def __str__(self):
-		return self.principal_alias
+		return self.nombre_y_apellido_estandarizados
 
-class Alias(models.Model):
-	alias = models.CharField(max_length=255)
-	identity = models.ForeignKey(
-		Person,
-		null=False,
-		blank=False,
-		on_delete=models.CASCADE,
-		related_name='aliases'
-	)
-	def __str__(self):
-		return self.alias
+class TipoDeRelacion(models.Model):
 
-class EnslavementRelationType(models.Model):
-
-	name = models.CharField(
+	nombre = models.CharField(
 		max_length=255,
 		unique=True
 	)
 	def __str__(self):
-		return self.name
+		return self.nombre
 
 
-class EnslavementRelationRole(models.Model):
+class RolDeRelacion(models.Model):
 
-	name = models.CharField(
+	nombre = models.CharField(
 		max_length=255,
 		unique=True
 	)
 	def __str__(self):
-		return self.name
+		return self.nombre
 
-class EnslavementRelation(models.Model):
+
+class EsclavizadorDocumentoConexion(models.Model):
 	
-	relation_type=models.ForeignKey(
-		EnslavementRelationType,
+	tipo_de_relacion=models.ForeignKey(
+		TipoDeRelacion,
+		null=False,
+		blank=False,
+		on_delete=models.CASCADE
+	)
+	
+	rol_de_esclavizador=models.ForeignKey(
+		RolDeRelacion,
+		null=False,
+		blank=False,
+		on_delete=models.CASCADE
+	)
+	
+	esclavizador = models.ForeignKey(
+		Esclavizador,
 		null=False,
 		blank=False,
 		on_delete=models.CASCADE,
-		related_name='person_relations'
+		related_name='esclavizador_relaciones'
 	)
 	
-	person_role=models.ForeignKey(
-		EnslavementRelationRole,
-		null=False,
-		blank=False,
-		on_delete=models.CASCADE,
-		related_name='person_relations'
-	)
-	
-	person = models.ForeignKey(
-		Person,
-		null=False,
-		blank=False,
-		on_delete=models.CASCADE,
-		related_name='person_relations'
-	)
-	document = models.ForeignKey(
+	documento = models.ForeignKey(
 		Documento,
 		null=False,
 		blank=False,
 		on_delete=models.CASCADE,
-		related_name='document_relations'
+		related_name='documento_eslclavizador_conexiones'
 	)
+	
+	
 	def __str__(self):
-		return self.person.principal_alias + " " + self.document.resumen
+		return self.persona.nombre_y_apellido_estandarizados + " " + self.documento.resumen
+
+
+
+
+class EsclavizadaDocumentoConexion(models.Model):
+	
+	tipo_de_relacion=models.ForeignKey(
+		TipoDeRelacion,
+		null=False,
+		blank=False,
+		on_delete=models.CASCADE
+	)
+	
+	persona_esclavizada = models.ForeignKey(
+		PersonaEsclavizada,
+		null=False,
+		blank=False,
+		on_delete=models.CASCADE,
+		related_name='persona_esclavizadas_relaciones'
+	)
+	
+	persona_edad = models.FloatField(
+		"Edad registrada en el documento",
+		null=True,
+		blank=True
+	)
+	
+	persona_altura = models.FloatField(
+		"Altura registrada en el documento",
+		null=True,
+		blank=True
+	)
+	
+	documento = models.ForeignKey(
+		Documento,
+		null=False,
+		blank=False,
+		on_delete=models.CASCADE,
+		related_name='documento_esclavizada_conexiones'
+	)
+	
+	
+	def __str__(self):
+		return self.persona.nombre_y_apellido_estandarizados + " " + self.documento.resumen
 

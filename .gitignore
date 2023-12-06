@@ -1,8 +1,10 @@
-api/static/
+mexican_database/static/
 networks/tmp/
 *.DS_Store
 *.sql
 dbconf.json
+
+
 
 django/document/management/commands/BL_Sources/
 

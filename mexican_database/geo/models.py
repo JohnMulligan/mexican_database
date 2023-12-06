@@ -3,89 +3,69 @@ import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
-class Polygon(models.Model):
-	"""
-	Shape of a spatial entity (optional for the locations that link to these)
-	"""
+class Poligono(models.Model):
 	
-	shape=models.JSONField(
-		"Geojson Polygon",
+	forma=models.JSONField(
 		null=True,
 		blank=True
 	)
 
-class LocationType(models.Model):
-	"""
-	Geographic Location Type
-	We will default to points, but open up onto a polygons model for when we want to show countries etc
-	"""
+class TipoDeLugar(models.Model):
 
-	name = models.CharField(
-		"Geographic Location Type",
+	nombre = models.CharField(
 		max_length=255,
 		unique=True
 	)
 	def __str__(self):
-		return self.name
+		return self.nombre
 
 	class Meta:
-		verbose_name = "Geographic Location Type"
-		verbose_name_plural = "Geographic Location Types"
+		verbose_name = "Tipo de Lugar"
+		verbose_name_plural = "Tipos de Lugares"
 
 
-class Location(models.Model):
-	"""
-	Geographic Location
-	"""
+class Lugar(models.Model):
 	uuid=models.UUIDField(default=uuid.uuid4, editable=False,null=True)
 
-	name = models.CharField(
-		"Location name",
+	nombre = models.CharField(
 		max_length=255
 	)
-	longitude = models.DecimalField(
-		"Longitude of Centroid",
-		max_digits=10,
-		decimal_places=7,
+	longitud = models.FloatField(
 		null=True,
 		blank=True
 	)
-	latitude = models.DecimalField(
-		"Latitude of Centroid",
-		max_digits=10,
-		decimal_places=7,
+	latitud = models.FloatField(
 		null=True,
 		blank=True
 	)
 	
-	parent = models.ForeignKey(
+	madre = models.ForeignKey(
 		'self',
-		verbose_name="Child of",
+		verbose_name="hijo de",
 		null=True,
 		blank=True,
 		on_delete=models.SET_NULL,
-		related_name='children'
+		related_name='hijos'
 	)
 	
-	location_type = models.ForeignKey(
-		'LocationType',
-		verbose_name="Location Type",
+	tipo_de_lugar = models.ForeignKey(
+		'TipoDeLugar',
+		verbose_name="Tipos de Lugar",
 		null=True,
 		on_delete=models.SET_NULL,
-		related_name='type_location'
+		related_name='type_Lugar'
 	)
 	
-	spatial_extent = models.ForeignKey(
-		'Polygon',
-		verbose_name="Polygon",
+	extension_espacial = models.ForeignKey(
+		'Poligono',
 		null=True,
 		blank=True,
 		on_delete=models.SET_NULL
 	)
 	
 	def __str__(self):
-		return self.name
+		return self.nombre
 
 	class Meta:
-		verbose_name = "Geographic Location"
-		verbose_name_plural = "Geographic Locations"
+		verbose_name = "Lugar"
+		verbose_name_plural = "Lugares"

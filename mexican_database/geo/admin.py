@@ -4,5 +4,5 @@ from geo.models import *
 
 
 
-admin.site.register(Location)
-admin.site.register(LocationType)
+admin.site.register(Lugar)
+admin.site.register(TipoDeLugar)

@@ -1,22 +1,46 @@
 from django.contrib import admin
 from person.models import *
-# Register your models here.
+from document.models import Documento
+import nested_admin
 
 
-class AliasInline(admin.StackedInline):
-	model=Alias
+
+class EsclavizadorDocumentoConexionInline_b(nested_admin.NestedStackedInline):
+	model = EsclavizadorDocumentoConexion
+	classes = ['collapse']
 	extra=0
-	classes=['collapse']
 
-class PersonAdmin(admin.ModelAdmin):
+
+class EsclavizadaDocumentoConexionInline_b(nested_admin.NestedStackedInline):
+	model = EsclavizadaDocumentoConexion
+	classes = ['collapse']
+	extra=0
+
+class PersonaEsclavizadaAdmin(nested_admin.NestedModelAdmin):
 	inlines=(
-		AliasInline,
+		EsclavizadaDocumentoConexionInline_b,
 	)
+	list_display = ('primer_nombre','apellido')
+	search_fields=('primer_nombre','apellido')
 
-admin.site.register(Occupation)
-admin.site.register(Person,PersonAdmin)
-admin.site.register(EnslavementRelation)
-admin.site.register(EnslavementRelationType)
+class EsclavizadorAdmin(nested_admin.NestedModelAdmin):
+	inlines=(
+		EsclavizadorDocumentoConexionInline_b,
+	)
+	list_display = ('nombre','apellido')
+	search_fields=('nombre','apellido')
 
-admin.site.register(EnslavementRelationRole)
-admin.site.register(Alias)
+
+
+admin.site.register(CategoriaDeOcupacion)
+admin.site.register(Ocupacion)
+admin.site.register(Sexo)
+admin.site.register(Etonimo)
+admin.site.register(CalidadDePersona)
+admin.site.register(HispanizacionDePersona)
+admin.site.register(EstatusDeEsclavizador)
+admin.site.register(SituacionDeLugarDeEsclavizador)
+admin.site.register(Esclavizador,EsclavizadorAdmin)
+admin.site.register(PersonaEsclavizada,PersonaEsclavizadaAdmin)
+admin.site.register(TipoDeRelacion)
+admin.site.register(RolDeRelacion)
