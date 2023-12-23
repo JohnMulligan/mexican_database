@@ -17,20 +17,20 @@ class Archivo(models.Model):
 	
 	archivo=models.CharField(
 		"Nombre de Archivo",
-		max_length=20,
+		max_length=150,
 		unique=True,
 		null=False,
 		blank=False
 	)
 	
 	def __str__(self):
-		return self.name
+		return self.archivo
 
 	
 class Fondo(models.Model):
 	
 	fondo=models.CharField(
-		max_length=20,
+		max_length=150,
 		null=False,
 		blank=False
 	)
@@ -45,13 +45,13 @@ class Fondo(models.Model):
 	)
 	
 	def __str__(self):
-		return ' : '.join([i if i is not None else '' for i in [self.archivo,self.fondo]])
+		return self.fondo
 
 
 class SubFondo(models.Model):
 
 	subfondo=models.CharField(
-		max_length=20,
+		max_length=150,
 		null=False,
 		blank=False
 	)
@@ -66,13 +66,13 @@ class SubFondo(models.Model):
 	)
 	
 	def __str__(self):
-		return ' : '.join([i if i is not None else '' for i in [self.fondo,self.subfondo]])
+		return self.subfondo
 
 
 class Volumen(models.Model):
 
 	volumen=models.CharField(
-		max_length=20,
+		max_length=150,
 		null=False,
 		blank=False
 	)
@@ -87,7 +87,7 @@ class Volumen(models.Model):
 	)
 	
 	def __str__(self):
-		return ' : '.join([i if i is not None else '' for i in [self.subfondo,self.volumen]])
+		return self.volumen
 
 
 class Asunto(models.Model):
@@ -99,7 +99,7 @@ class Asunto(models.Model):
 	)
 	
 	def __str__(self):
-		return self.name
+		return self.nombre
 
 
 class Documento(models.Model):
